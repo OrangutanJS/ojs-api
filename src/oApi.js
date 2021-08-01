@@ -1,6 +1,15 @@
 import formDataCreator from "./utils/formDataCreator";
 
-const APIRequestPOST = (uri, { body, ok = console.log, fail = console.error, headers, debug = false, auth = true} = Object.create(null))=> APIRequestV2({
+export const oAPI = {
+  post: APIRequestPOST,
+  get: APIRequestGET,
+  delete: APIRequestDELETE,
+  put: APIRequestPUT
+}
+
+
+function APIRequestPOST(uri, { body, ok = console.log, fail = console.error, headers, debug = false, auth = true} = Object.create(null)){
+  return APIRequest({
     method: 'POST',
     uri,
     queries: body,
@@ -9,9 +18,11 @@ const APIRequestPOST = (uri, { body, ok = console.log, fail = console.error, hea
     headers,
     debug,
     auth
-});
+  });
+}
 
-const APIRequestGET = (uri, { ok = console.log, fail = console.error, headers, debug = false, auth = true} = Object.create(null))=> APIRequestV2({
+function APIRequestGET(uri, { ok = console.log, fail = console.error, headers, debug = false, auth = true} = Object.create(null)) {
+  return APIRequest({
     method: 'GET',
     uri,
     success: ok,
@@ -19,9 +30,11 @@ const APIRequestGET = (uri, { ok = console.log, fail = console.error, headers, d
     headers,
     debug,
     auth
-});
+  });
+}
 
-const APIRequestPUT = (uri, { queries, ok = console.log, fail = console.error, headers, debug = false, auth = true} = Object.create(null)) => APIRequestV2({
+function APIRequestPUT(uri, { queries, ok = console.log, fail = console.error, headers, debug = false, auth = true} = Object.create(null)) {
+  return APIRequest({
     method: 'PUT',
     uri,
     queries,
@@ -30,9 +43,11 @@ const APIRequestPUT = (uri, { queries, ok = console.log, fail = console.error, h
     headers,
     debug,
     auth
-});
+  });
+}
 
-const APIRequestDELETE = (uri, {ok = console.log, fail = console.error, headers, debug = false, auth = true} = Object.create(null)) => APIRequest({
+function APIRequestDELETE(uri, {ok = console.log, fail = console.error, headers, debug = false, auth = true} = Object.create(null)) {
+  return APIRequest({
     method: 'DELETE',
     uri,
     success: ok,
@@ -40,17 +55,11 @@ const APIRequestDELETE = (uri, {ok = console.log, fail = console.error, headers,
     headers,
     debug,
     auth
-});
-
-export const oAPI = {
-    post: APIRequestPOST,
-    get: APIRequestGET,
-    delete: APIRequestDELETE,
-    put: APIRequestPUT
-};
+  });
+}
 
 
-const APIRequest = ({method, uri, queries, success, fail, headers={}, debug, auth}) =>{
+function APIRequest({method, uri, queries, success, fail, headers={}, debug, auth}) {
     const initObject = createInitObject(method, queries, headers, auth);
     if (!Object.keys(initObject).length){
         return false;
@@ -62,9 +71,9 @@ const APIRequest = ({method, uri, queries, success, fail, headers={}, debug, aut
     )
         .then(async response=> await requestResponseController(response, success, fail, Boolean(debug), auth))
         .catch(async err=> await requestResponseController(err, success, fail, Boolean(debug), auth));
-};
+}
 
-const createInitObject = (method, queries, headers, auth)=>{
+function createInitObject(method, queries, headers, auth) {
     const initObject = {
         method: method
     };
@@ -85,17 +94,17 @@ const createInitObject = (method, queries, headers, auth)=>{
 
     if ((typeof headers === 'object') && Object.keys(headers).length){
         const requestHeaders = new Headers();
-        for (const [ key, value ]of Object.entries(headers)){
-            requestHeaders.append(key, value);
+        for (const [ key, value ] of Object.entries(headers)){
+            requestHeaders.append(key, String(value));
         }
         initObject.headers = requestHeaders;
     }
 
     return initObject;
-};
+}
 
 
-const requestResponseController = async (response, success, fail, debug, auth) => {
+async function requestResponseController(response, success, fail, debug, auth) {
 
     const [ respData, respText ] = await responseDataParse(response);
 
@@ -129,9 +138,9 @@ const requestResponseController = async (response, success, fail, debug, auth) =
         responseObject.message = 'Nieznany błąd.';
         return fail(responseObject);
     }
-};
+}
 
-const responseDataParse = async response => {
+async function responseDataParse(response) {
     let respText = '';
     let respData = Object.create(null);
     try {
@@ -159,28 +168,28 @@ const responseDataParse = async response => {
         console.error('API methods: data parsing error.');
         return [ Object.create(null), 'Nieznany błąd' ];
     }
-};
+}
 
-const getStatusCodeMessage = response => {
-    if (response.ok){
-        switch (response.status){
-            case 200: return 'OK';
-            case 201: return 'Utworzono';
-            case 202: return 'Zaakceptowano';
-            case 204: return 'Sukces. Brak danych.';
-            default: return 'Sukces';
-        }
-    }else {
-        switch (response.status){
-            case 302: return 'Przekierowano na inny zasób.';
-            case 304: return 'Przekierowano: Nie zmodyfikowano.';
-            case 400: return 'Złe żądanie.';
-            case 401: return 'Błąd autoryzacji.';
-            case 403: return 'Brak dostępu do zasobu.';
-            case 404: return 'Nie znaleziono zasobu.';
-            case 409: return 'Konflikt. Niepoprawne dane.';
-            case 500: return 'Błąd żądania: Nieznany błąd.';
-            default: return 'Nieznany błąd.';
-        }
+function getStatusCodeMessage(response) {
+  if (response.ok){
+    switch (response.status){
+      case 200: return 'OK';
+      case 201: return 'Utworzono';
+      case 202: return 'Zaakceptowano';
+      case 204: return 'Sukces. Brak danych.';
+      default: return 'Sukces';
     }
-};
+  }else {
+    switch (response.status){
+      case 302: return 'Przekierowano na inny zasób.';
+      case 304: return 'Przekierowano: Nie zmodyfikowano.';
+      case 400: return 'Złe żądanie.';
+      case 401: return 'Błąd autoryzacji.';
+      case 403: return 'Brak dostępu do zasobu.';
+      case 404: return 'Nie znaleziono zasobu.';
+      case 409: return 'Konflikt. Niepoprawne dane.';
+      case 500: return 'Błąd żądania: Nieznany błąd.';
+      default: return 'Nieznany błąd.';
+    }
+  }
+}
