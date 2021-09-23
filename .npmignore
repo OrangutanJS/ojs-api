@@ -3,3 +3,4 @@ node_modules/
 src/utils/tests/
 playground/
 .gitignore
+webpack.config.js
