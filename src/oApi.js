@@ -55,7 +55,7 @@ function APIRequestGET(
 function APIRequestPUT(
   uri,
   {
-    queries,
+    body,
     ok = console.log,
     fail = console.error,
     headers,
@@ -66,7 +66,7 @@ function APIRequestPUT(
   return makeApiRequest({
     method: 'PUT',
     uri,
-    queries,
+    queries: body,
     success: ok,
     fail,
     headers,
@@ -78,7 +78,7 @@ function APIRequestPUT(
 function APIRequestPATCH(
   uri,
   {
-    queries,
+    body,
     ok = console.log,
     fail = console.error,
     headers,
@@ -89,7 +89,7 @@ function APIRequestPATCH(
   return makeApiRequest({
     method: 'PATCH',
     uri,
-    queries,
+    queries: body,
     success: ok,
     fail,
     headers,
