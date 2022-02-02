@@ -1,5 +1,7 @@
+/* eslint-disable padded-blocks */
 import oAPI from '../src/oApi';
 
+const URI = 'https://reqres.in/api/users';
 apiTester();
 
 // 403 - 'https://dummyapi.io/data/v1/'
@@ -7,27 +9,35 @@ apiTester();
 // 404 - 'https://reqres.in/api/users/23'
 
 async function apiTester() {
-  const oRequest = await oAPI.post(
-    'https://reqres.in/api/users',
-    {
-      body: {
-        name: 'Kacper',
-        job: 'bezrobotny',
-      },
-      ok: sukces => console.log('sukces', sukces),
-      fail: err => console.log('błąd', err),
-    },
+  const exampleStoreObject = {
+    name: 'Kacper',
+    surname: 'Stodolak',
+    company: 'Allegro',
+    imageFile: new File([''], 'exampleFile'),
+  };
+
+  const response = await oAPI.post(
+    URI,
+    // Przekazanie obiektu stanu do wysłania
+    { body: exampleStoreObject },
   );
 
-  console.log(oRequest);
+  console.log(response);
 }
 
-// const oRequest = await oAPI.get(
-//   'https://reqres.in/api/users/23',
-//   {
-//     headers: {
-//       accept: 'application/json',
+// async function apiTester() {
+//   const response = await oAPI.get(
+//     'https://reqres.in/api/users/23',
+//     {
+//       headers: {
+//         accept: 'application/json',
+//       },
 //     },
-//     fail: err => console.log('błąd', err),
-//   },
-// );
+//   );
+
+//   if (response.ok) {
+//     console.log(response);
+//   } else {
+//     console.error(response);
+//   }
+// }

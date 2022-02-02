@@ -25,13 +25,14 @@ export default function createInitObject(method, queries, headers, auth) {
     }
   }
 
+  const requestHeaders = new Headers();
+  requestHeaders.append('Content-Type', 'multipart/form-data');
   if ((typeof headers === 'object') && Object.keys(headers).length) {
-    const requestHeaders = new Headers();
     for (const [key, value] of Object.entries(headers)) {
       requestHeaders.append(key, String(value));
     }
-    initObject.headers = requestHeaders;
   }
+  initObject.headers = requestHeaders;
 
   return initObject;
 }
